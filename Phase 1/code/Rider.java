@@ -29,7 +29,7 @@ public class Rider extends Person implements IRider{
         this.HomeCity = homeCity;
     }
 
-
+    @Override
    public int compareTo(IRider other){
        return Integer.compare(this.getId(), other.getId());
 }
