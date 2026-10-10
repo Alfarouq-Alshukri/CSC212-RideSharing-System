@@ -22,6 +22,7 @@ public interface IRider extends IPerson, Comparable<IRider> {
      * rider's ID is less than, equal to, or greater than the other
      * rider's ID. This ordering must be consistent with equality by ID.
      */
-    @Override
+@Override
     int compareTo(IRider other);
+
 }

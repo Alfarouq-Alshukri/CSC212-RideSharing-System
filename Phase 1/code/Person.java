@@ -3,7 +3,8 @@ public abstract class Person implements IPerson {
     private int id;
     private String name;
     private String phoneNumber;
-    private LinkedList<IRide> rideHistory;
+    private LinkedList<IRide> rideHistory; // should be changed to <Ride> when the class is finished
+
     // constructor
     public Person(int id, String name, String phoneNember){
         this.id = id;
