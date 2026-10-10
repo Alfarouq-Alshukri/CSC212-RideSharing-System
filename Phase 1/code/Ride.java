@@ -1,0 +1,86 @@
+public abstract class Ride implements IRide {
+
+    private final int rideId;
+    private String pickupLocation;
+    private final IDateTime pickupTime;
+    private final IDateTime dropoffTime;
+    private String dropoffLocation;
+    private IDriver driver;
+
+    public Ride(int rideId, String pickupLocation, IDateTime pickupTime, IDateTime dropoffTime,
+                String dropoffLocation, IDriver driver) {
+        this.rideId = rideId;
+        this.pickupLocation = pickupLocation;
+        this.pickupTime = pickupTime;
+        this.dropoffTime = dropoffTime;
+        this.dropoffLocation = dropoffLocation;
+        this.driver = driver;
+    }
+
+    @Override
+    public int getRideId() {
+        return rideId;
+    }
+
+    @Override
+    public String getPickupLocation() {
+        return pickupLocation;
+    }
+
+    @Override
+    public void setPickupLocation(String pickupLocation) {
+        this.pickupLocation = pickupLocation;
+    }
+
+    @Override
+    public IDateTime getPickupTime() {
+        return pickupTime;
+    }
+
+    @Override
+    public IDateTime getDropoffTime() {
+        return dropoffTime;
+    }
+
+    @Override
+    public String getDropoffLocation() {
+        return dropoffLocation;
+    }
+
+    @Override
+    public void setDropoffLocation(String dropoffLocation) {
+        this.dropoffLocation = dropoffLocation;
+    }
+
+    @Override
+    public IDriver getDriver() {
+        return driver;
+    }
+
+    @Override
+    public void setDriver(IDriver driver) {
+        this.driver = driver;
+    }
+
+    @Override
+    public abstract boolean hasRider(int riderId);
+
+    @Override
+    public int compareTo(IRide other) {
+        return pickupLocation.compareToIgnoreCase(other.getPickupLocation());
+    }
+
+    @Override
+    public String toString() {
+        String driverText;
+        if (driver == null)
+            driverText = "none";
+        else
+            driverText = driver.getName() + " (ID " + driver.getId() + ")";
+
+        return "Ride #" + rideId
+                + " | Pickup: " + pickupLocation + " at " + pickupTime
+                + " | Drop-off: " + dropoffLocation + " at " + dropoffTime
+                + " | Driver: " + driverText;
+    }
+}
