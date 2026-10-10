@@ -3,12 +3,12 @@ public abstract class Person implements IPerson {
     private int id;
     private String name;
     private String phoneNumber;
-    private LinkedList<IRide> rideHistory; // should be changed to <Ride> when the class is finished
+    private LinkedList<IRide> rideHistory;
     // constructor
     public Person(int id, String name, String phoneNember){
         this.id = id;
         this.name = name;
-        this.phoneNumber = phoneNember;
+        setPhoneNumber(phoneNember);
         rideHistory = new LinkedList<IRide>();
     }
     
@@ -61,12 +61,16 @@ public abstract class Person implements IPerson {
     public String toString(){
 
         String s = "ID: " + id + "\nName: " + name + "\nPhone Number: " + phoneNumber + "\nRide History: ";
+        if (rideHistory.empty()) {
+            return s;
+        }
         rideHistory.findFirst();
-        IRide tmp = rideHistory.retrieve();
-        while (tmp != null) {
-            s += "\n" + tmp.toString();
+        while (true) {
+            s += "\n" + rideHistory.retrieve().toString();
+            if (rideHistory.last()) {
+                break;
+            }
             rideHistory.findNext();
-            tmp = rideHistory.retrieve();
         }
 
         return s;
