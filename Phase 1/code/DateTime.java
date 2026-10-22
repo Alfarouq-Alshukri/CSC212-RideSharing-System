@@ -25,7 +25,18 @@ public class DateTime implements IDateTime {
             this.minute = minute;
         }
     }
+    public DateTime(String dateTime){
+        String[] splittedDateTime = dateTime.split(" ");
+        String[] date = splittedDateTime[0].split("/");
+        String[] time = splittedDateTime[1].split(":");
+        int year = Integer.parseInt(date[2]);
+        int month = Integer.parseInt(date[0]);
+        int day = Integer.parseInt(date[1]);
+        int hour = Integer.parseInt(time[0]);
+        int minute = Integer.parseInt(time[1]);
+        this(year, month, day, hour, minute);
 
+    }
     @Override
     public int getYear() {
         return year;
