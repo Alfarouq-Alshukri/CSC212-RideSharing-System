@@ -13,6 +13,12 @@ public class RideList implements IRideList {
         if (ride == null || containsId(ride.getRideId()))
             return false;
 
+        if (ride instanceof Ride)
+            ((Ride) ride).attachList(this);
+        return insertRide(ride);
+    }
+
+    private boolean insertRide(IRide ride) {
         if (rides.empty()) {
             rides.insert(ride);
             size++;
@@ -46,6 +52,8 @@ public class RideList implements IRideList {
         rides.findFirst();
         while (true) {
             if (rides.retrieve().getRideId() == rideId) {
+                if (rides.retrieve() instanceof Ride)
+                    ((Ride) rides.retrieve()).detachList(this);
                 rides.remove();
                 size--;
                 return true;
@@ -59,7 +67,32 @@ public class RideList implements IRideList {
 
     @Override
     public LinkedList<IRide> getAllAlphabetically() {
-        return rides;
+        LinkedList<IRide> copy = new LinkedList<IRide>();
+        if (!rides.empty()) {
+            rides.findFirst();
+            while (true) {
+                copy.insert(rides.retrieve());
+                if (rides.last()) break;
+                rides.findNext();
+            }
+        }
+        return copy;
+    }
+
+    // A location setter must preserve the ordering of every containing list.
+    void pickupLocationChanged(IRide ride) {
+        if (rides.empty()) return;
+        rides.findFirst();
+        while (true) {
+            if (rides.retrieve() == ride) {
+                rides.remove();
+                size--;
+                insertRide(ride);
+                return;
+            }
+            if (rides.last()) break;
+            rides.findNext();
+        }
     }
 
     @Override

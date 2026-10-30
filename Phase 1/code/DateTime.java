@@ -7,35 +7,41 @@ public class DateTime implements IDateTime {
     private final int minute;
 
     public DateTime(int year, int month, int day, int hour, int minute) {
-        if (year < 1 || year > 2026
+        if (year < 1
                 || month < 1 || month > 12
-                || day < 1 || day > 31
+                || day < 1 || day > daysInMonth(year, month)
                 || hour < 0 || hour > 23
                 || minute < 0 || minute > 59) {
-            this.year = 2026;
-            this.month = 1;
-            this.day = 1;
-            this.hour = 0;
-            this.minute = 0;
-        } else {
-            this.year = year;
-            this.month = month;
-            this.day = day;
-            this.hour = hour;
-            this.minute = minute;
+            throw new IllegalArgumentException("Invalid date/time");
         }
+        this.year = year;
+        this.month = month;
+        this.day = day;
+        this.hour = hour;
+        this.minute = minute;
     }
     public DateTime(String dateTime){
-        String[] splittedDateTime = dateTime.split(" ");
-        String[] date = splittedDateTime[0].split("/");
-        String[] time = splittedDateTime[1].split(":");
-        int year = Integer.parseInt(date[2]);
-        int month = Integer.parseInt(date[0]);
-        int day = Integer.parseInt(date[1]);
-        int hour = Integer.parseInt(time[0]);
-        int minute = Integer.parseInt(time[1]);
-        this(year, month, day, hour, minute);
+        this(parse(dateTime));
+    }
 
+    private DateTime(int[] parts) {
+        this(parts[2], parts[0], parts[1], parts[3], parts[4]);
+    }
+
+    private static int[] parse(String value) {
+        if (value == null || !value.trim().matches("[0-9]{2}/[0-9]{2}/[0-9]{4,} [0-9]{2}:[0-9]{2}"))
+            throw new IllegalArgumentException("Use MM/DD/YYYY HH:MM");
+        String[] parts = value.trim().split("[/ :]");
+        int[] numbers = new int[5];
+        for (int i = 0; i < numbers.length; i++)
+            numbers[i] = Integer.parseInt(parts[i]);
+        return numbers;
+    }
+
+    private static int daysInMonth(int year, int month) {
+        if (month == 2)
+            return year % 400 == 0 || (year % 4 == 0 && year % 100 != 0) ? 29 : 28;
+        return month == 4 || month == 6 || month == 9 || month == 11 ? 30 : 31;
     }
     @Override
     public int getYear() {

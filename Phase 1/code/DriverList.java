@@ -1,6 +1,7 @@
 public class DriverList implements IDriverList {
     // attributes
     private LinkedList<IDriver> drivers;
+    private final PersonNameIndex<IDriver> names = new PersonNameIndex<IDriver>();
     // constructor
     public DriverList() {
         drivers = new LinkedList<IDriver>();
@@ -8,8 +9,14 @@ public class DriverList implements IDriverList {
 
     // Inserts a driver into the list in sorted order by ID. If a driver with the same ID already exists, insertion fails.
     public boolean add(IDriver driver) {
+        if (driver == null || driver.getName() == null || driver.getName().trim().isEmpty()
+                || driver.getPhoneNumber() == null || !driver.getPhoneNumber().matches("[0-9]{10}")
+                || driver.getVehiclePlate() == null || !driver.getVehiclePlate().matches("[A-Z]{3}[0-9]{4}")
+                || driver.getVehicleType() == null)
+            return false;
         if (drivers.empty()) {
             drivers.insert(driver);
+            names.add(driver);
             return true;
         }
         if (findByVehiclePlate(driver.getVehiclePlate()) != null) {
@@ -25,10 +32,12 @@ public class DriverList implements IDriverList {
             if (comparison < 0) {
                 drivers.update(driver);
                 drivers.insert(currentDriver);
+                names.add(driver);
                 return true;
             }
             if (drivers.last()) {
                 drivers.insert(driver);
+                names.add(driver);
                 return true;
             }
             drivers.findNext();
@@ -119,6 +128,11 @@ public class DriverList implements IDriverList {
         return result;
     }
 
+    // Copies a maintained name index, so alphabetical listing takes O(n).
+    public LinkedList<IDriver> getAllAlphabetically() {
+        return names.getAll();
+    }
+
     //Returns all drivers in the linked list.
     public LinkedList<IDriver> getAll() {
         LinkedList<IDriver> result = new LinkedList<IDriver>();
@@ -145,6 +159,7 @@ public class DriverList implements IDriverList {
         while (true) {
             IDriver driver = drivers.retrieve();
             if (driver.getId() == driverId) {
+                names.remove(drivers.retrieve());
                 drivers.remove();
                 return true;
             }
@@ -167,6 +182,7 @@ public class DriverList implements IDriverList {
         while (true) {
             IDriver driver = drivers.retrieve();
             if (driver.getVehiclePlate().equals(vehiclePlate)) {
+                names.remove(drivers.retrieve());
                 drivers.remove();
                 return true;
             }
@@ -194,6 +210,7 @@ public class DriverList implements IDriverList {
             IDriver driver = drivers.retrieve();
             if (driver.getName().equals(fullName)) {
                 boolean wasLast = drivers.last();
+                names.remove(drivers.retrieve());
                 drivers.remove();
                 count++;
                 if (wasLast || drivers.empty()) {
@@ -224,6 +241,7 @@ public class DriverList implements IDriverList {
             IDriver driver = drivers.retrieve();
             if (driver.getVehicleType() == vehicleType) {
                 boolean wasLast = drivers.last();
+                names.remove(drivers.retrieve());
                 drivers.remove();
                 count++;
                 if (wasLast || drivers.empty()) {

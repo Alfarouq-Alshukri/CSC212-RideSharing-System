@@ -1,15 +1,16 @@
 public abstract class Person implements IPerson {
     // attributes
-    private int id;
+    private final int id;
     private String name;
     private String phoneNumber;
     private LinkedList<IRide> rideHistory;
+    private Node<PersonNameIndex<?>> nameIndexes;
 
     // constructor
-    public Person(int id, String name, String phoneNember){
+    public Person(int id, String name, String phoneNumber){
         this.id = id;
-        this.name = name;
-        setPhoneNumber(phoneNember);
+        setName(name);
+        setPhoneNumber(phoneNumber);
         rideHistory = new LinkedList<IRide>();
     }
     
@@ -26,7 +27,31 @@ public abstract class Person implements IPerson {
 
     //Sets the full name of this person.
     public void setName(String name){
+        if (name == null || name.trim().isEmpty())
+            throw new IllegalArgumentException("Name is required");
         this.name = name;
+        for (Node<PersonNameIndex<?>> node = nameIndexes; node != null; node = node.next)
+            node.data.nameChanged(this);
+    }
+
+    void attachNameIndex(PersonNameIndex<?> index) {
+        Node<PersonNameIndex<?>> node = new Node<PersonNameIndex<?>>(index);
+        node.next = nameIndexes;
+        nameIndexes = node;
+    }
+
+    void detachNameIndex(PersonNameIndex<?> index) {
+        Node<PersonNameIndex<?>> previous = null;
+        Node<PersonNameIndex<?>> node = nameIndexes;
+        while (node != null) {
+            if (node.data == index) {
+                if (previous == null) nameIndexes = node.next;
+                else previous.next = node.next;
+                return;
+            }
+            previous = node;
+            node = node.next;
+        }
     }
 
     //return the phone number of this person.
@@ -41,11 +66,11 @@ public abstract class Person implements IPerson {
      * throw IllegalArgumentException if it does not match.
      */
     public void setPhoneNumber(String phoneNumber){
-        if (phoneNumber.length() != 10){
+        if (phoneNumber == null || phoneNumber.length() != 10){
             throw new IllegalArgumentException("Phone number must be of length 10");
         }
         for(int i = 0; i < phoneNumber.length(); i++){
-            if(!(Character.isDigit(phoneNumber.charAt(i)))){
+            if(phoneNumber.charAt(i) < '0' || phoneNumber.charAt(i) > '9'){
                 throw new IllegalArgumentException("Phone number must be all numbers");
             } 
         }

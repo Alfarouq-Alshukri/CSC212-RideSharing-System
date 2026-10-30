@@ -2,6 +2,7 @@ public class RiderList implements IRiderList {
 
     private LinkedList<IRider> riders;
     private int size;
+    private final PersonNameIndex<IRider> names = new PersonNameIndex<IRider>();
 
     public RiderList() {
         riders = new LinkedList<IRider>();
@@ -15,12 +16,17 @@ public class RiderList implements IRiderList {
 
     @Override
     public boolean add(IRider rider) {
-        if (rider == null)
+        if (rider == null || rider.getName() == null || rider.getName().trim().isEmpty()
+                || rider.getEmail() == null || rider.getEmail().trim().isEmpty()
+                || rider.getHomeCity() == null || rider.getHomeCity().trim().isEmpty()
+                || rider.getPhoneNumber() == null || !rider.getPhoneNumber().matches("[0-9]{10}")
+                || findByEmail(rider.getEmail()) != null)
             return false;
 
         if (riders.empty()) {
             riders.insert(rider);
             size++;
+            names.add(rider);
             return true;
         }
 
@@ -37,12 +43,14 @@ public class RiderList implements IRiderList {
                 riders.update(rider);
                 riders.insert(displaced);
                 size++;
+                names.add(rider);
                 return true;
             }
 
             if (riders.last()) {
                 riders.insert(rider);
                 size++;
+                names.add(rider);
                 return true;
             }
             riders.findNext();
@@ -134,6 +142,11 @@ public class RiderList implements IRiderList {
 
 
 
+    // Copies a maintained name index, so alphabetical listing takes O(n).
+    public LinkedList<IRider> getAllAlphabetically() {
+        return names.getAll();
+    }
+
     @Override
     public LinkedList<IRider> getAll() {
         LinkedList<IRider> result = new LinkedList<IRider>();
@@ -161,6 +174,7 @@ public class RiderList implements IRiderList {
             int currentId = riders.retrieve().getId();
 
             if (currentId == riderId) {
+                names.remove(riders.retrieve());
                 riders.remove();
                 size--;
                 return true;
@@ -184,6 +198,7 @@ public class RiderList implements IRiderList {
         riders.findFirst();
         while (true) {
             if (email.equals(riders.retrieve().getEmail())) {
+                names.remove(riders.retrieve());
                 riders.remove();
                 size--;
                 return true;
@@ -207,6 +222,7 @@ public class RiderList implements IRiderList {
         riders.findFirst();
         for (int i = 0; i < original; i++) {
             if (fullName.equals(riders.retrieve().getName())) {
+                names.remove(riders.retrieve());
                 riders.remove();
                 size--;
                 removed++;
@@ -228,6 +244,7 @@ public class RiderList implements IRiderList {
         riders.findFirst();
         for (int i = 0; i < original; i++) {
             if (homeCity.equals(riders.retrieve().getHomeCity())) {
+                names.remove(riders.retrieve());
                 riders.remove();
                 size--;
                 removed++;

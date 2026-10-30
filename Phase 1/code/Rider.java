@@ -5,8 +5,8 @@ public class Rider extends Person implements IRider{
 
     public Rider(int ID ,String name, String phoneNember, String email, String City){
       super(ID,name,phoneNember);
-        this.Email = email;
-        this.HomeCity = City;
+        setEmail(email);
+        setHomeCity(City);
     }
 
     //return the rider's email address.
@@ -16,6 +16,8 @@ public class Rider extends Person implements IRider{
 
     //Sets the rider's email address.
     public void setEmail(String email){
+        if (email == null || email.trim().isEmpty())
+            throw new IllegalArgumentException("Email is required");
         this.Email = email;
     }
 
@@ -26,6 +28,8 @@ public class Rider extends Person implements IRider{
 
     //Sets the rider's home city.
     public void setHomeCity(String homeCity){
+        if (homeCity == null || homeCity.trim().isEmpty())
+            throw new IllegalArgumentException("Home city is required");
         this.HomeCity = homeCity;
     }
 

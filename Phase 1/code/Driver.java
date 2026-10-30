@@ -6,7 +6,7 @@ public class Driver extends Person implements IDriver {
     public Driver(int id, String name, String phoneNumber, String vehiclePlate, VehicleType vehicleType){
         super(id, name, phoneNumber);
         setVehiclePlate(vehiclePlate);
-        this.vehicleType = vehicleType;
+        setVehicleType(vehicleType);
     }
      /**
      * return the driver's vehicle plate number.
@@ -25,7 +25,7 @@ public class Driver extends Person implements IDriver {
      * IDriverList/IRideSharingSystem when a driver is added.
      */
     public void setVehiclePlate(String vehiclePlate) {
-    if (vehiclePlate.length() != 7) {
+    if (vehiclePlate == null || vehiclePlate.length() != 7) {
         throw new IllegalArgumentException("Vehicle plate must be 3 uppercase letters followed by 4 digits");
     }
 
@@ -37,7 +37,7 @@ public class Driver extends Person implements IDriver {
     }
 
     for (int i = 3; i < 7; i++) {
-        if (!(Character.isDigit(vehiclePlate.charAt(i)))) {
+        if (vehiclePlate.charAt(i) < '0' || vehiclePlate.charAt(i) > '9') {
             throw new IllegalArgumentException("Last 4 characters must be digits");
         }
     }
@@ -51,6 +51,8 @@ public class Driver extends Person implements IDriver {
 
     //Sets the driver's vehicle type.
     public void setVehicleType(VehicleType vehicleType){
+        if (vehicleType == null)
+            throw new IllegalArgumentException("Vehicle type is required");
         this.vehicleType = vehicleType;
     }
 
@@ -62,7 +64,7 @@ public class Driver extends Person implements IDriver {
      */
     @Override
     public int compareTo(IDriver other){
-        return this.getId() - other.getId();
+        return Integer.compare(this.getId(), other.getId());
     }
 
     @Override
