@@ -5,17 +5,17 @@ public class RideSharingSystem implements IRideSharingSystem {
     public DriverList driverList;
     public RideList rideList;
 
-    
+
     public RideSharingSystem(){
         riderList = new RiderList();
         driverList = new DriverList();
         rideList = new RideList();
-        
+
     }
     // Loads riders from a CSV file.
-	// Returns true if loading succeeds; false otherwise.
-	public boolean loadRidersFromCSV(String ridersFilePath){
-        
+    // Returns true if loading succeeds; false otherwise.
+    public boolean loadRidersFromCSV(String ridersFilePath){
+
         try{
             File ridersFile = new File("riders_100.csv");
             FileReader FR = new FileReader(ridersFile);
@@ -32,17 +32,17 @@ public class RideSharingSystem implements IRideSharingSystem {
             BFR.close();
             return true;
         }
-       catch (IOException e){
+        catch (IOException e){
             System.out.println(e.getMessage());
             return false;
-       }
-      
+        }
+
     }
 
-	// Loads drivers from a CSV file.
-	// Returns true if loading succeeds; false otherwise.
-	public boolean loadDriversFromCSV(String driversFilePath){
- 
+    // Loads drivers from a CSV file.
+    // Returns true if loading succeeds; false otherwise.
+    public boolean loadDriversFromCSV(String driversFilePath){
+
         try{
             File driversFile = new File("drivers_30.csv");
             FileReader FR = new FileReader(driversFile);
@@ -59,16 +59,16 @@ public class RideSharingSystem implements IRideSharingSystem {
             BFR.close();
             return true;
         }
-       catch (IOException e){
+        catch (IOException e){
             System.out.println(e.getMessage());
             return false;
-       }
-          }
+        }
+    }
 
-	// Loads rides from a CSV file. All referenced riders and the assigned driver must already exist. It must enforce conflict rules
-	// Returns true if loading succeeds; false otherwise.
-	public boolean loadRidesFromCSV(String ridesFilePath){
- 
+    // Loads rides from a CSV file. All referenced riders and the assigned driver must already exist. It must enforce conflict rules
+    // Returns true if loading succeeds; false otherwise.
+    public boolean loadRidesFromCSV(String ridesFilePath){
+
         try{
             int rideID = 0;
             File ridesFile = new File("rides_40.csv");
@@ -91,71 +91,80 @@ public class RideSharingSystem implements IRideSharingSystem {
 
                     if(info[0].equals("PRIVATE")){
                         PrivateRide ride = new PrivateRide(rideID++,
-                                            info[1], new DateTime(info[2]), new DateTime(info[3]), info[4],
-                                            driverList.findById(Integer.parseInt(info[5])),
-                                            riderList.findById(Integer.parseInt(info[6]))  );
-                    rideList.addRide(ride);
+                                info[1], new DateTime(info[2]), new DateTime(info[3]), info[4],
+                                driverList.findById(Integer.parseInt(info[5])),
+                                riderList.findById(Integer.parseInt(info[6]))  );
+                        rideList.addRide(ride);
                     }
 
                     else {
                         SharedRide ride = new SharedRide(rideID++,
-                                            info[1], new DateTime(info[2]), new DateTime(info[3]), info[4],
-                                            driverList.findById(Integer.parseInt(info[5]))     );
+                                info[1], new DateTime(info[2]), new DateTime(info[3]), info[4],
+                                driverList.findById(Integer.parseInt(info[5]))     );
                         for (int i=0; i < riders.length; i++){
                             IRider rider = riderList.findById(Integer.parseInt(riders[i]));
                             ride.addParticipant(rider);
                         }
                         rideList.addRide(ride);
-                    }                    
+                    }
                 }
                 s = BFR.readLine();
             }
             BFR.close();
             return true;
         }
-       catch (IOException e){
+        catch (IOException e){
             System.out.println(e.getMessage());
             return false;
-       }
         }
+    }
 
     //Adds a rider to the system after enforcing uniqueness by ID. Returns true if added; false if duplicate ID or invalid
-     public boolean addRider(IRider rider){
-        return false;
-     }
+    public boolean addRider(IRider rider) {
+
+        if (rider == null)
+            return false;
+        if (rider.getName() == null || rider.getEmail() == null || rider.getHomeCity() == null)
+            return false;
+        return riderList.add(rider); // RiderList rejects duplicate IDs
+
+    }
 
     /**
      * Adds a driver to the system after enforcing uniqueness by ID and by
      * vehicle plate number (no two drivers may share the same plate).
      * Returns true if added; false if duplicate ID, duplicate plate, or invalid
      */
-     public boolean addDriver(IDriver driver){
+    public boolean addDriver(IDriver driver){
         return false;
-     }
+    }
 
     //Searches for a rider by ID.
     public IRider searchRiderById(int riderId){
-        return null;
+        return riderList.findById(riderId);
     }
 
     //Searches for a rider by email.
     public IRider searchRiderByEmail(String email){
-        return null;
+        if (email == null)
+            return null;
+        return riderList.findByEmail(email);
     }
+
 
     //Searches for all riders whose full name exactly matches the given name.
     public LinkedList<IRider> searchRidersByName(String fullName){
-        return null;
+        return riderList.findByName(fullName);
     }
 
     //Searches for all riders from the specified home city.
     public LinkedList<IRider> searchRidersByHomeCity(String homeCity){
-        return null;
+        return riderList.findByHomeCity(homeCity);
     }
 
     //Returns all riders stored in the system.
     public LinkedList<IRider> getAllRiders(){
-        return null;
+        return riderList.getAll();
     }
 
     //Searches for a driver by ID.
