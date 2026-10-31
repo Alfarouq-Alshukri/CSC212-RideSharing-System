@@ -1,46 +1,41 @@
-public class Rider extends Person implements IRider{
+public class Rider extends Person implements IRider {
 
-    private String Email;
-    private String HomeCity;
+    private String email;
+    private String homeCity;
 
-    public Rider(int ID ,String name, String phoneNember, String email, String City){
-      super(ID,name,phoneNember);
+    public Rider(int id, String name, String phoneNumber, String email, String homeCity) {
+        super(id, name, phoneNumber);
         setEmail(email);
-        setHomeCity(City);
+        setHomeCity(homeCity);
     }
 
-    //return the rider's email address.
-    public String getEmail(){
-        return Email;
+    public String getEmail() {
+        return email;
     }
 
-    //Sets the rider's email address.
-    public void setEmail(String email){
+    public void setEmail(String email) {
         if (email == null || email.trim().isEmpty())
             throw new IllegalArgumentException("Email is required");
-        this.Email = email;
+        this.email = email;
     }
 
-    //return the rider's home city.
-    public String getHomeCity(){
-        return HomeCity;
+    public String getHomeCity() {
+        return homeCity;
     }
 
-    //Sets the rider's home city.
-    public void setHomeCity(String homeCity){
+    public void setHomeCity(String homeCity) {
         if (homeCity == null || homeCity.trim().isEmpty())
             throw new IllegalArgumentException("Home city is required");
-        this.HomeCity = homeCity;
+        this.homeCity = homeCity;
     }
 
     @Override
-   public int compareTo(IRider other){
-       return Integer.compare(this.getId(), other.getId());
-}
+    public int compareTo(IRider other) {
+        return Integer.compare(getId(), other.getId());
+    }
 
     @Override
     public String toString() {
-        return super.toString() + "\n, Email: " + Email + ",\n Home City: " + HomeCity;
+        return super.toString() + "\n, Email: " + email + ",\n Home City: " + homeCity;
     }
-
 }

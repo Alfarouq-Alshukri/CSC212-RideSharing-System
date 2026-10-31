@@ -1,4 +1,4 @@
-/** A second, name-ordered chain; the primary person lists remain ordered by ID. */
+// A second chain orders names while the main lists stay ordered by ID.
 class PersonNameIndex<T extends IPerson> {
     private Node<T> head;
 
@@ -17,13 +17,17 @@ class PersonNameIndex<T extends IPerson> {
             current = current.next;
         }
         node.next = current;
-        if (previous == null) head = node;
-        else previous.next = node;
+        if (previous == null)
+            head = node;
+        else
+            previous.next = node;
     }
 
     private int compare(T first, T second) {
         int comparison = first.getName().compareToIgnoreCase(second.getName());
-        return comparison != 0 ? comparison : Integer.compare(first.getId(), second.getId());
+        if (comparison != 0)
+            return comparison;
+        return Integer.compare(first.getId(), second.getId());
     }
 
     void remove(T person) {
@@ -37,8 +41,10 @@ class PersonNameIndex<T extends IPerson> {
         Node<T> current = head;
         while (current != null) {
             if (current.data == person) {
-                if (previous == null) head = current.next;
-                else previous.next = current.next;
+                if (previous == null)
+                    head = current.next;
+                else
+                    previous.next = current.next;
                 return current.data;
             }
             previous = current;
@@ -55,8 +61,11 @@ class PersonNameIndex<T extends IPerson> {
 
     LinkedList<T> getAll() {
         LinkedList<T> result = new LinkedList<T>();
-        for (Node<T> current = head; current != null; current = current.next)
+        Node<T> current = head;
+        while (current != null) {
             result.insert(current.data);
+            current = current.next;
+        }
         return result;
     }
 }

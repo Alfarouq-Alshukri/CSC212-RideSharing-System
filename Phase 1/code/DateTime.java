@@ -20,7 +20,8 @@ public class DateTime implements IDateTime {
         this.hour = hour;
         this.minute = minute;
     }
-    public DateTime(String dateTime){
+
+    public DateTime(String dateTime) {
         this(parse(dateTime));
     }
 
@@ -39,10 +40,16 @@ public class DateTime implements IDateTime {
     }
 
     private static int daysInMonth(int year, int month) {
-        if (month == 2)
-            return year % 400 == 0 || (year % 4 == 0 && year % 100 != 0) ? 29 : 28;
-        return month == 4 || month == 6 || month == 9 || month == 11 ? 30 : 31;
+        if (month == 2) {
+            if (year % 400 == 0 || (year % 4 == 0 && year % 100 != 0))
+                return 29;
+            return 28;
+        }
+        if (month == 4 || month == 6 || month == 9 || month == 11)
+            return 30;
+        return 31;
     }
+
     @Override
     public int getYear() {
         return year;

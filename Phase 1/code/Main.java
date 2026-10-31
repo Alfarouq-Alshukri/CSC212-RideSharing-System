@@ -1,6 +1,6 @@
-import java.util.*;
+import java.util.NoSuchElementException;
+import java.util.Scanner;
 
-/** The only application class that reads from or writes to the console. */
 public class Main {
     private static final RideSharingSystem system = new RideSharingSystem();
     private static final Scanner input = new Scanner(System.in);
@@ -23,22 +23,48 @@ public class Main {
             while (true) {
                 printMenu();
                 String choice = read("Choose an option: ");
-                if (choice == null || choice.equals("0")) return;
+                if (choice == null || choice.equals("0"))
+                    return;
                 try {
                     switch (Integer.parseInt(choice)) {
-                        case 1: printList(system.getAllRiders()); break;
-                        case 2: printList(system.searchRidersByHomeCity(required("Home city: "))); break;
-                        case 3: printList(system.searchRidersByName(required("Full name: "))); break;
-                        case 4: addRider(); break;
-                        case 5: printList(system.getAllDrivers()); break;
-                        case 6: printList(system.searchDriversByVehicleType(vehicleType())); break;
-                        case 7: addDriver(); break;
-                        case 8: printList(system.getAllRidesAlphabetically()); break;
-                        case 9: printList(system.searchRidesByPickupLocation(required("Pickup location: "))); break;
-                        case 10: printList(system.searchRidesByRiderName(required("Rider full name: "))); break;
-                        case 11: printList(system.getSharedRideParticipants(required("Pickup location: "))); break;
-                        case 12: addRide(); break;
-                        default: System.out.println("Choose an option from 0 to 12.");
+                        case 1:
+                            printList(system.getAllRiders());
+                            break;
+                        case 2:
+                            printList(system.searchRidersByHomeCity(required("Home city: ")));
+                            break;
+                        case 3:
+                            printList(system.searchRidersByName(required("Full name: ")));
+                            break;
+                        case 4:
+                            addRider();
+                            break;
+                        case 5:
+                            printList(system.getAllDrivers());
+                            break;
+                        case 6:
+                            printList(system.searchDriversByVehicleType(vehicleType()));
+                            break;
+                        case 7:
+                            addDriver();
+                            break;
+                        case 8:
+                            printList(system.getAllRidesAlphabetically());
+                            break;
+                        case 9:
+                            printList(system.searchRidesByPickupLocation(required("Pickup location: ")));
+                            break;
+                        case 10:
+                            printList(system.searchRidesByRiderName(required("Rider full name: ")));
+                            break;
+                        case 11:
+                            printList(system.getSharedRideParticipants(required("Pickup location: ")));
+                            break;
+                        case 12:
+                            addRide();
+                            break;
+                        default:
+                            System.out.println("Choose an option from 0 to 12.");
                     }
                 } catch (IllegalArgumentException e) {
                     System.out.println("Operation failed: " + e.getMessage());
@@ -67,13 +93,17 @@ public class Main {
 
     private static String read(String prompt) {
         System.out.print(prompt);
-        return input.hasNextLine() ? input.nextLine().trim() : null;
+        if (input.hasNextLine())
+            return input.nextLine().trim();
+        return null;
     }
 
     private static String required(String prompt) {
         String value = read(prompt);
-        if (value == null) throw new NoSuchElementException();
-        if (value.isEmpty()) throw new IllegalArgumentException("A value is required");
+        if (value == null)
+            throw new NoSuchElementException();
+        if (value.isEmpty())
+            throw new IllegalArgumentException("A value is required");
         return value;
     }
 
@@ -118,17 +148,21 @@ public class Main {
         } else {
             String[] ids = required("Rider IDs (at least two, separated by semicolons): ").split(";", -1);
             int[] riderIds = new int[ids.length];
-            for (int i = 0; i < ids.length; i++) riderIds[i] = Integer.parseInt(ids[i].trim());
+            for (int i = 0; i < ids.length; i++)
+                riderIds[i] = Integer.parseInt(ids[i].trim());
             int driverId = number("Driver ID: ");
             printResult(system.scheduleSharedRide(pickup, start, end, dropoff, riderIds, driverId));
         }
     }
 
     private static void printResult(boolean success) {
-        System.out.println(success ? "Operation succeeded." : "Operation failed (invalid, duplicate, missing, or conflicting data).");
+        if (success)
+            System.out.println("Operation succeeded.");
+        else
+            System.out.println("Operation failed (invalid, duplicate, missing, or conflicting data).");
     }
 
-    private static void printList(LinkedList<?> list) {
+    private static <T> void printList(LinkedList<T> list) {
         if (list.empty()) {
             System.out.println("No results.");
             return;
@@ -136,7 +170,8 @@ public class Main {
         list.findFirst();
         while (true) {
             System.out.println(list.retrieve().toString());
-            if (list.last()) break;
+            if (list.last())
+                break;
             list.findNext();
         }
     }

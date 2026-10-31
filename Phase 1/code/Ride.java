@@ -6,6 +6,7 @@ public abstract class Ride implements IRide {
     private final IDateTime dropoffTime;
     private String dropoffLocation;
     private IDriver driver;
+    // A ride may belong to more than one sorted list.
     private Node<RideList> lists;
 
     public Ride(int rideId, String pickupLocation, IDateTime pickupTime, IDateTime dropoffTime,
@@ -14,8 +15,10 @@ public abstract class Ride implements IRide {
         if (pickupTime == null || dropoffTime == null || pickupTime.compareTo(dropoffTime) >= 0)
             throw new IllegalArgumentException("Drop-off time must be after pickup time");
         setPickupLocation(pickupLocation);
-        this.pickupTime = new DateTime(pickupTime.getYear(), pickupTime.getMonth(), pickupTime.getDay(), pickupTime.getHour(), pickupTime.getMinute());
-        this.dropoffTime = new DateTime(dropoffTime.getYear(), dropoffTime.getMonth(), dropoffTime.getDay(), dropoffTime.getHour(), dropoffTime.getMinute());
+        this.pickupTime = new DateTime(pickupTime.getYear(), pickupTime.getMonth(),
+                pickupTime.getDay(), pickupTime.getHour(), pickupTime.getMinute());
+        this.dropoffTime = new DateTime(dropoffTime.getYear(), dropoffTime.getMonth(),
+                dropoffTime.getDay(), dropoffTime.getHour(), dropoffTime.getMinute());
         setDropoffLocation(dropoffLocation);
         this.driver = driver;
     }
@@ -35,8 +38,11 @@ public abstract class Ride implements IRide {
         if (pickupLocation == null || pickupLocation.trim().isEmpty())
             throw new IllegalArgumentException("Pickup location is required");
         this.pickupLocation = pickupLocation;
-        for (Node<RideList> node = lists; node != null; node = node.next)
+        Node<RideList> node = lists;
+        while (node != null) {
             node.data.pickupLocationChanged(this);
+            node = node.next;
+        }
     }
 
     void attachList(RideList list) {
@@ -50,8 +56,10 @@ public abstract class Ride implements IRide {
         Node<RideList> node = lists;
         while (node != null) {
             if (node.data == list) {
-                if (previous == null) lists = node.next;
-                else previous.next = node.next;
+                if (previous == null)
+                    lists = node.next;
+                else
+                    previous.next = node.next;
                 return;
             }
             previous = node;

@@ -9,10 +9,10 @@ public class RiderList implements IRiderList {
         size = 0;
     }
 
-
     @Override
-    public int size() { return size; }
-
+    public int size() {
+        return size;
+    }
 
     @Override
     public boolean add(IRider rider) {
@@ -25,43 +25,35 @@ public class RiderList implements IRiderList {
 
         if (riders.empty()) {
             riders.insert(rider);
-            size++;
-            names.add(rider);
-            return true;
-        }
-
-        riders.findFirst();
-
-        while (true) {
-            int cmp = rider.compareTo(riders.retrieve());
-
-            if (cmp == 0)
-                return false;
-
-            if (cmp < 0) {
-                IRider displaced = riders.retrieve();
-                riders.update(rider);
-                riders.insert(displaced);
-                size++;
-                names.add(rider);
-                return true;
+        } else {
+            riders.findFirst();
+            while (true) {
+                IRider current = riders.retrieve();
+                int comparison = rider.compareTo(current);
+                if (comparison == 0)
+                    return false;
+                if (comparison < 0) {
+                    riders.update(rider);
+                    riders.insert(current);
+                    break;
+                }
+                if (riders.last()) {
+                    riders.insert(rider);
+                    break;
+                }
+                riders.findNext();
             }
-
-            if (riders.last()) {
-                riders.insert(rider);
-                size++;
-                names.add(rider);
-                return true;
-            }
-            riders.findNext();
         }
+        size++;
+        names.add(rider);
+        return true;
     }
 
     @Override
     public LinkedList<IRider> findByName(String fullName) {
         LinkedList<IRider> result = new LinkedList<IRider>();
         if (riders.empty())
-            return result;                     
+            return result;
 
         riders.findFirst();
         while (true) {
@@ -76,7 +68,7 @@ public class RiderList implements IRiderList {
     }
 
     @Override
-    public LinkedList<IRider> findByHomeCity(String Homecity) {
+    public LinkedList<IRider> findByHomeCity(String homeCity) {
         LinkedList<IRider> result = new LinkedList<IRider>();
         if (riders.empty())
             return result;
@@ -84,7 +76,7 @@ public class RiderList implements IRiderList {
         riders.findFirst();
         while (true) {
             IRider r = riders.retrieve();
-            if (r.getHomeCity().equals(Homecity))
+            if (r.getHomeCity().equals(homeCity))
                 result.insert(r);
             if (riders.last())
                 break;
@@ -92,8 +84,6 @@ public class RiderList implements IRiderList {
         }
         return result;
     }
-
-
 
     public IRider findById(int id) {
         if (riders.empty())
@@ -106,7 +96,6 @@ public class RiderList implements IRiderList {
             if (current.getId() == id)
                 return current;
 
-
             if (current.getId() > id)
                 return null;
 
@@ -116,8 +105,6 @@ public class RiderList implements IRiderList {
         }
         return null;
     }
-
-
 
     public IRider findByEmail(String email) {
 
@@ -138,11 +125,7 @@ public class RiderList implements IRiderList {
         return null;
     }
 
-
-
-
-
-    // Copies a maintained name index, so alphabetical listing takes O(n).
+    // The name index lets alphabetical listing take O(n).
     public LinkedList<IRider> getAllAlphabetically() {
         return names.getAll();
     }
@@ -189,7 +172,6 @@ public class RiderList implements IRiderList {
         return false;
     }
 
-
     @Override
     public boolean removeByEmail(String email) {
         if (riders.empty() || email == null)
@@ -210,7 +192,6 @@ public class RiderList implements IRiderList {
         }
         return false;
     }
-
 
     @Override
     public int removeByName(String fullName) {
@@ -233,7 +214,6 @@ public class RiderList implements IRiderList {
         return removed;
     }
 
-
     @Override
     public int removeByHomeCity(String homeCity) {
         int original = size;
@@ -254,5 +234,4 @@ public class RiderList implements IRiderList {
         }
         return removed;
     }
-
 }

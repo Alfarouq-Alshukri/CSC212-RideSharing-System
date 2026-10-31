@@ -15,33 +15,30 @@ public class RideList implements IRideList {
 
         if (ride instanceof Ride)
             ((Ride) ride).attachList(this);
-        return insertRide(ride);
+        insertRide(ride);
+        return true;
     }
 
-    private boolean insertRide(IRide ride) {
+    private void insertRide(IRide ride) {
         if (rides.empty()) {
             rides.insert(ride);
-            size++;
-            return true;
-        }
-
-        rides.findFirst();
-        while (true) {
-            if (ride.compareTo(rides.retrieve()) < 0) {
-                IRide displaced = rides.retrieve();
-                rides.update(ride);
-                rides.insert(displaced);
-                size++;
-                return true;
+        } else {
+            rides.findFirst();
+            while (true) {
+                if (ride.compareTo(rides.retrieve()) < 0) {
+                    IRide current = rides.retrieve();
+                    rides.update(ride);
+                    rides.insert(current);
+                    break;
+                }
+                if (rides.last()) {
+                    rides.insert(ride);
+                    break;
+                }
+                rides.findNext();
             }
-            if (rides.last())
-                break;
-            rides.findNext();
         }
-
-        rides.insert(ride);
         size++;
-        return true;
     }
 
     @Override
@@ -51,9 +48,10 @@ public class RideList implements IRideList {
 
         rides.findFirst();
         while (true) {
-            if (rides.retrieve().getRideId() == rideId) {
-                if (rides.retrieve() instanceof Ride)
-                    ((Ride) rides.retrieve()).detachList(this);
+            IRide ride = rides.retrieve();
+            if (ride.getRideId() == rideId) {
+                if (ride instanceof Ride)
+                    ((Ride) ride).detachList(this);
                 rides.remove();
                 size--;
                 return true;
@@ -72,16 +70,18 @@ public class RideList implements IRideList {
             rides.findFirst();
             while (true) {
                 copy.insert(rides.retrieve());
-                if (rides.last()) break;
+                if (rides.last())
+                    break;
                 rides.findNext();
             }
         }
         return copy;
     }
 
-    // A location setter must preserve the ordering of every containing list.
+    // Reinsert a renamed pickup location without changing list membership.
     void pickupLocationChanged(IRide ride) {
-        if (rides.empty()) return;
+        if (rides.empty())
+            return;
         rides.findFirst();
         while (true) {
             if (rides.retrieve() == ride) {
@@ -90,7 +90,8 @@ public class RideList implements IRideList {
                 insertRide(ride);
                 return;
             }
-            if (rides.last()) break;
+            if (rides.last())
+                break;
             rides.findNext();
         }
     }
