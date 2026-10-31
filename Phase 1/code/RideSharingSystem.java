@@ -23,8 +23,6 @@ public class RideSharingSystem implements IRideSharingSystem {
             reader = new BufferedReader(new FileReader(ridersFilePath));
             String line;
             while ((line = reader.readLine()) != null) {
-                if (line.trim().isEmpty())
-                    continue;
                 String[] info = columns(line, 5);
                 if (!addRider(new Rider(Integer.parseInt(info[0]), info[1], info[3], info[2], info[4])))
                     return false;
@@ -52,8 +50,6 @@ public class RideSharingSystem implements IRideSharingSystem {
             reader = new BufferedReader(new FileReader(driversFilePath));
             String line;
             while ((line = reader.readLine()) != null) {
-                if (line.trim().isEmpty())
-                    continue;
                 String[] info = columns(line, 5);
                 if (!addDriver(new Driver(Integer.parseInt(info[0]), info[1], info[2], info[3], VehicleType.valueOf(info[4]))))
                     return false;
@@ -81,8 +77,6 @@ public class RideSharingSystem implements IRideSharingSystem {
             reader = new BufferedReader(new FileReader(ridesFilePath));
             String line;
             while ((line = reader.readLine()) != null) {
-                if (line.trim().isEmpty())
-                    continue;
                 String[] info = columns(line, 7);
                 DateTime pickup = new DateTime(info[2]);
                 DateTime dropoff = new DateTime(info[3]);
