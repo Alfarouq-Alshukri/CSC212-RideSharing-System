@@ -17,7 +17,10 @@ public class RideSharingSystem implements IRideSharingSystem {
     public boolean loadRidersFromCSV(String ridersFilePath) {
         if (ridersFilePath == null)
             return false;
-        try (BufferedReader reader = new BufferedReader(new FileReader(ridersFilePath))) {
+        BufferedReader reader = null;
+        boolean loaded = true;
+        try {
+            reader = new BufferedReader(new FileReader(ridersFilePath));
             String line;
             while ((line = reader.readLine()) != null) {
                 if (line.trim().isEmpty())
@@ -26,16 +29,27 @@ public class RideSharingSystem implements IRideSharingSystem {
                 if (!addRider(new Rider(Integer.parseInt(info[0]), info[1], info[3], info[2], info[4])))
                     return false;
             }
-            return true;
         } catch (IOException | IllegalArgumentException e) {
-            return false;
+            loaded = false;
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    loaded = false;
+                }
+            }
         }
+        return loaded;
     }
 
     public boolean loadDriversFromCSV(String driversFilePath) {
         if (driversFilePath == null)
             return false;
-        try (BufferedReader reader = new BufferedReader(new FileReader(driversFilePath))) {
+        BufferedReader reader = null;
+        boolean loaded = true;
+        try {
+            reader = new BufferedReader(new FileReader(driversFilePath));
             String line;
             while ((line = reader.readLine()) != null) {
                 if (line.trim().isEmpty())
@@ -44,16 +58,27 @@ public class RideSharingSystem implements IRideSharingSystem {
                 if (!addDriver(new Driver(Integer.parseInt(info[0]), info[1], info[2], info[3], VehicleType.valueOf(info[4]))))
                     return false;
             }
-            return true;
         } catch (IOException | IllegalArgumentException e) {
-            return false;
+            loaded = false;
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    loaded = false;
+                }
+            }
         }
+        return loaded;
     }
 
     public boolean loadRidesFromCSV(String ridesFilePath) {
         if (ridesFilePath == null)
             return false;
-        try (BufferedReader reader = new BufferedReader(new FileReader(ridesFilePath))) {
+        BufferedReader reader = null;
+        boolean loaded = true;
+        try {
+            reader = new BufferedReader(new FileReader(ridesFilePath));
             String line;
             while ((line = reader.readLine()) != null) {
                 if (line.trim().isEmpty())
@@ -76,10 +101,18 @@ public class RideSharingSystem implements IRideSharingSystem {
                 if (!added)
                     return false;
             }
-            return true;
         } catch (IOException | IllegalArgumentException e) {
-            return false;
+            loaded = false;
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    loaded = false;
+                }
+            }
         }
+        return loaded;
     }
 
     // Reject a bad row before adding it; earlier rows stay loaded.
