@@ -13,29 +13,32 @@ public class RideList implements IRideList {
         if (ride == null || containsId(ride.getRideId()))
             return false;
 
+        if (ride instanceof Ride)
+            ((Ride) ride).attachList(this);
+        insertRide(ride);
+        return true;
+    }
+
+    private void insertRide(IRide ride) {
         if (rides.empty()) {
             rides.insert(ride);
-            size++;
-            return true;
-        }
-
-        rides.findFirst();
-        while (true) {
-            if (ride.compareTo(rides.retrieve()) < 0) {
-                IRide displaced = rides.retrieve();
-                rides.update(ride);
-                rides.insert(displaced);
-                size++;
-                return true;
+        } else {
+            rides.findFirst();
+            while (true) {
+                if (ride.compareTo(rides.retrieve()) < 0) {
+                    IRide current = rides.retrieve();
+                    rides.update(ride);
+                    rides.insert(current);
+                    break;
+                }
+                if (rides.last()) {
+                    rides.insert(ride);
+                    break;
+                }
+                rides.findNext();
             }
-            if (rides.last())
-                break;
-            rides.findNext();
         }
-
-        rides.insert(ride);
         size++;
-        return true;
     }
 
     @Override
@@ -45,7 +48,10 @@ public class RideList implements IRideList {
 
         rides.findFirst();
         while (true) {
-            if (rides.retrieve().getRideId() == rideId) {
+            IRide ride = rides.retrieve();
+            if (ride.getRideId() == rideId) {
+                if (ride instanceof Ride)
+                    ((Ride) ride).detachList(this);
                 rides.remove();
                 size--;
                 return true;
@@ -59,7 +65,35 @@ public class RideList implements IRideList {
 
     @Override
     public LinkedList<IRide> getAllAlphabetically() {
-        return rides;
+        LinkedList<IRide> copy = new LinkedList<IRide>();
+        if (!rides.empty()) {
+            rides.findFirst();
+            while (true) {
+                copy.insert(rides.retrieve());
+                if (rides.last())
+                    break;
+                rides.findNext();
+            }
+        }
+        return copy;
+    }
+
+    // Reinsert a renamed pickup location without changing list membership.
+    void pickupLocationChanged(IRide ride) {
+        if (rides.empty())
+            return;
+        rides.findFirst();
+        while (true) {
+            if (rides.retrieve() == ride) {
+                rides.remove();
+                size--;
+                insertRide(ride);
+                return;
+            }
+            if (rides.last())
+                break;
+            rides.findNext();
+        }
     }
 
     @Override
