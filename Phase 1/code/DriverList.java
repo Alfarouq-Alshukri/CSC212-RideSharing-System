@@ -1,7 +1,7 @@
 public class DriverList implements IDriverList {
 
     private LinkedList<IDriver> drivers;
-    private final PersonNameIndex<IDriver> names = new PersonNameIndex<IDriver>();
+    private final PersonNameIndex names = new PersonNameIndex();
 
     public DriverList() {
         drivers = new LinkedList<IDriver>();
@@ -122,7 +122,7 @@ public class DriverList implements IDriverList {
 
     // The name index lets alphabetical listing take O(n).
     public LinkedList<IDriver> getAllAlphabetically() {
-        return names.getAll();
+        return names.getDrivers();
     }
 
     public LinkedList<IDriver> getAll() {

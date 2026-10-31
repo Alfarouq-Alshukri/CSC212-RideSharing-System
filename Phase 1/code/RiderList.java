@@ -2,7 +2,7 @@ public class RiderList implements IRiderList {
 
     private LinkedList<IRider> riders;
     private int size;
-    private final PersonNameIndex<IRider> names = new PersonNameIndex<IRider>();
+    private final PersonNameIndex names = new PersonNameIndex();
 
     public RiderList() {
         riders = new LinkedList<IRider>();
@@ -127,7 +127,7 @@ public class RiderList implements IRiderList {
 
     // The name index lets alphabetical listing take O(n).
     public LinkedList<IRider> getAllAlphabetically() {
-        return names.getAll();
+        return names.getRiders();
     }
 
     @Override

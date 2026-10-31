@@ -5,7 +5,7 @@ public abstract class Person implements IPerson {
     private String phoneNumber;
     private LinkedList<IRide> rideHistory;
     // Keep every name index sorted when this person is renamed.
-    private Node<PersonNameIndex<?>> nameIndexes;
+    private Node<PersonNameIndex> nameIndexes;
 
     public Person(int id, String name, String phoneNumber) {
         this.id = id;
@@ -26,22 +26,22 @@ public abstract class Person implements IPerson {
         if (name == null || name.trim().isEmpty())
             throw new IllegalArgumentException("Name is required");
         this.name = name;
-        Node<PersonNameIndex<?>> node = nameIndexes;
+        Node<PersonNameIndex> node = nameIndexes;
         while (node != null) {
             node.data.nameChanged(this);
             node = node.next;
         }
     }
 
-    void attachNameIndex(PersonNameIndex<?> index) {
-        Node<PersonNameIndex<?>> node = new Node<PersonNameIndex<?>>(index);
+    void attachNameIndex(PersonNameIndex index) {
+        Node<PersonNameIndex> node = new Node<PersonNameIndex>(index);
         node.next = nameIndexes;
         nameIndexes = node;
     }
 
-    void detachNameIndex(PersonNameIndex<?> index) {
-        Node<PersonNameIndex<?>> previous = null;
-        Node<PersonNameIndex<?>> node = nameIndexes;
+    void detachNameIndex(PersonNameIndex index) {
+        Node<PersonNameIndex> previous = null;
+        Node<PersonNameIndex> node = nameIndexes;
         while (node != null) {
             if (node.data == index) {
                 if (previous == null)
