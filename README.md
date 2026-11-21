@@ -1,4 +1,4 @@
-# Ride-Sharing System
+# Ride-Sharing System - KSUBER
 
 A Java-based ride-sharing application developed for the **CSC 212 – Data Structures** course at King Saud University.
 
